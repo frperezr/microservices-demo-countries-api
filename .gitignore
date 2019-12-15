@@ -6,3 +6,5 @@ proto-ts
 dist
 yarn.lock
 .DS_Store
+
+*_seed.sql

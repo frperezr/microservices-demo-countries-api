@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "start": "node ./dist/src/carts-api/src/index.js",
+    "start": "node ./dist/src/budgets-api/src/index.js",
     "dev": "tsc-watch --onSuccess \"node ./dist/server.js\" --onFailure \"echo Beep! Compilation Failed\" --compiler typescript/bin/tsc",
     "test": "jest",
     "testWithCoverage": "jest --coverage"
