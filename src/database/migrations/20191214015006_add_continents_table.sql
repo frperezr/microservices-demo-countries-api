@@ -1,12 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE continents (
-  id primary key serial not null,
+  id serial NOT NULL,
   code text,
   name text,
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
-  deleted_at timestamptz
+  deleted_at timestamptz,
+  CONSTRAINT continents_pkey PRIMARY KEY (id)
 );
 
 CREATE trigger update_continents_update_at

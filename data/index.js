@@ -19,18 +19,18 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-const insertContinentSQL = ({ code, name }) => `INSERT INTO continents SET (code, name) VALUES ("${code}", "${name}");`
+const insertContinentSQL = ({ code, name }) => `INSERT INTO continents (code, name) VALUES ("${code}", "${name}");`
 
 const dropContinentSQL = ({ code, name }) => `DELETE FROM continents WHERE code = "${code}" AND name = "${name}";`
 
 const insertCountrySQL = ({ continent_code, code, name }) =>
-  `INSERT INTO countries SET (continent_code, code, name) VALUES ("${continent_code}", "${code}", "${name}");`
+  `INSERT INTO countries (continent_code, code, name) VALUES ("${continent_code}", "${code}", "${name}");`
 
 const dropCountrySQL = ({ continent_code, code, name }) =>
   `DELETE FROM countries WHERE continent_code = "${continent_code}" AND code = "${code}" AND name = "${name}";`
 
 const insertCitySQL = ({ stay_price, travel_price, country, name }) =>
-  `INSERT INTO cities SET (stay_price, travel_price, country, name) VALUES ("${stay_price}", "${travel_price}", "${country}", "${name}");`
+  `INSERT INTO cities (stay_price, travel_price, country, name) VALUES (${stay_price}, ${travel_price}, "${country}", "${name}");`
 
 const dropCitySQL = ({ stay_price, travel_price, country, name }) =>
   `DELETE FROM cities WHERE stay_price = ${stay_price} AND travel_price = ${travel_price} AND country = "${country}" AND name = "${name}";`
