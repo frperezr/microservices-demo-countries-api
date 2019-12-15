@@ -1,11 +1,18 @@
-FROM alpine
+FROM node:alpine
 
-RUN apk add --update ca-certificates
+WORKDIR /countries-api
 
-WORKDIR /src/countries-api
+COPY ./package.json ./
 
-COPY bin/noken-countries-api /usr/bin/noken-countries-api
+RUN yarn install --production=true
+# RUN yarn install
 
-EXPOSE 3040
+COPY dist /countries-api/dist
+COPY bin/goose /usr/bin/goose
+COPY bin/wait-db /usr/bin/wait-db
+COPY src/database/migrations /migrations
+COPY pb /countries-api/pb
 
-CMD ["/bin/sh", "-l", "-c", "noken-countries-api"]
+EXPOSE 3030
+
+CMD ["/bin/sh", "-l", "-c", "wait-db && goose -dir /migrations postgres ${POSTGRES_DSN} up && yarn start"]

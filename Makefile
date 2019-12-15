@@ -1,41 +1,27 @@
-VERSION=0.0.1
+VERSION=$$(cat package.json | grep version | sed 's/"/ /g' | awk {'print $$3'})
 USER=frperezr
 SVC=noken-countries-api
 
-BIN=$(PWD)/bin/$(SVC)
-BIN_PATH=$(PWD)/bin
-
-GO ?= go
-LDFLAGS='-extldflags "static" -X main.svcVersion=$(VERSION) -X main.svcName=$(SVC)'
-TAGS=netgo -installsuffix netgo
-
-clean c:
-	@echo "[clean] Cleaning bin folder..."
-	@rm -rf bin/
+seed s:
+	@echo "[generating] Generating file..."
+	@cd data && node index.js
 
 run r:
 	@echo "[running] Running service..."
-	@go run cmd/server/main.go
+	@yarn start
 
-build b:
-	@echo "[build] Building service..."
-	@cd cmd/server && $(GO) build -o $(BIN) -ldflags=$(LDFLAGS) -tags $(TAGS)
+dev:
+	@echo "[running] Running service in dev mode..."
+	@yarn dev
 
-build-linux bl:
-	@echo "[build-linux] Building service..."
-	@cd cmd/server && GOOS=linux GOARCH=amd64 $(GO) build -o $(BIN) -ldflags=$(LDFLAGS) -tags $(TAGS)
-
-docker d: build-linux
+docker d:
 	@echo "[docker] Building image..."
 	@docker build -t $(USER)/$(SVC):$(VERSION) .
 
-docker-login dl:
-	@echo "[docker] Login to docker..."
-	@$$(aws ecr get-login --no-include-email)
-
-push p: docker docker-login
+push p: docker
 	@echo "[docker] pushing $(USER)/$(SVC):$(VERSION)"
 	@docker tag $(USER)/$(SVC):$(VERSION) $(USER)/$(SVC):$(VERSION)
 	@docker push $(USER)/$(SVC):$(VERSION)
 
-.PHONY: clean run build docker docker-login push
+.PHONY: seed run docker docker-login push
+
