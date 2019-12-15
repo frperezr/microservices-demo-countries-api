@@ -39,7 +39,7 @@ const getFileName = (file) =>
   `${new Date()
     .toISOString()
     .split('.')[0]
-    .replace(/\D/g, '')}_${file}_seed.sql`
+    .replace(/\D/g, '')}${file.length}_${file}_seed.sql`
 
 const write_sql = (file, up, down) => {
   const name = getFileName(file)
@@ -51,7 +51,7 @@ const write_sql = (file, up, down) => {
       `,
     (err) => {
       if (err) return console.log(err)
-      console.log('The file was saved!')
+      console.log(`The file ${name} was saved!`)
     },
   )
 
