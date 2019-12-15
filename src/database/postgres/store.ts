@@ -44,7 +44,7 @@ class Store implements ICountryStore {
       if (result.rows.length === 0) {
         throw new Error('no item found')
       }
-      return camelCaseObject(result.rows[0])
+      return camelCaseObject(result.rows)
     } catch (err) {
       throw err
     }
@@ -80,7 +80,7 @@ class Store implements ICountryStore {
       if (result.rows.length === 0) {
         throw new Error('no item found')
       }
-      return camelCaseObject(result.rows[0])
+      return camelCaseObject(result.rows)
     } catch (err) {
       throw err
     }
@@ -116,7 +116,7 @@ class Store implements ICountryStore {
       if (result.rows.length === 0) {
         throw new Error('no item found')
       }
-      return camelCaseObject(result.rows[0])
+      return camelCaseObject(result.rows)
     } catch (err) {
       throw err
     }
