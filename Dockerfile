@@ -13,6 +13,6 @@ COPY bin/wait-db /usr/bin/wait-db
 COPY src/database/migrations /migrations
 COPY pb /countries-api/pb
 
-EXPOSE 3040
+EXPOSE 3030
 
 CMD ["/bin/sh", "-l", "-c", "wait-db && goose -dir /migrations postgres ${POSTGRES_DSN} up && yarn start"]
