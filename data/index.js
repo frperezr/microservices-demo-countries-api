@@ -1,60 +1,129 @@
 // node
-const fs = require("fs");
-const { spawn } = require("child_process");
+const fs = require('fs')
+const { spawn } = require('child_process')
 
 // json
-const json = require("./countries.json");
-const continents = require("./continents.json");
+const cities = require('./cities.json')
+const countries = require('./countries.json')
+const continents = require('./continents.json')
 
-const xah_obj_to_map = obj => {
-  const map = new Map();
-  Object.keys(obj).forEach(k => {
-    map.set(k, obj[k]);
-  });
-  return map;
-};
-
-function get_random_int(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
+const objToMap = (obj) => {
+  const map = new Map()
+  Object.keys(obj).forEach((k) => {
+    map.set(k, obj[k])
+  })
+  return map
 }
 
-const obj_to_sql = obj =>
-  `INSERT INTO countries SET (continent_code,continent,country,country_code,capital,value_budget,value_midrange,value_luxury) VALUES ("${obj.continent_code}","${obj.continent}","${obj.country}","${obj.country_code}","${obj.capital}",${obj.value_budget},${obj.value_midrange},${obj.value_luxury});`;
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min
+}
 
-const main = () => {
-  values = [];
-  for (let value of xah_obj_to_map(json)) {
-    const [k, v] = value;
-    let obj = {
-      continent_code: v.continent,
-      continent: continents[`${v.continent}`],
-      country: v.name,
-      country_code: k,
-      capital: v.capital,
-      value_budget: get_random_int(1, 500),
-      value_midrange: get_random_int(500, 1000),
-      value_luxury: get_random_int(1500, 3000)
-    };
-    values.push(obj_to_sql(obj));
-  }
+const insertContinentSQL = ({ code, name }) => `INSERT INTO continents SET (code, name) VALUES ("${code}", "${name}");`
 
-  const name = `seed_${Date.now()}.sql`;
+const dropContinentSQL = ({ code, name }) => `DELETE FROM continents WHERE code = "${code}" AND name = "${name}";`
+
+const insertCountrySQL = ({ continent_code, code, name }) =>
+  `INSERT INTO countries SET (continent_code, code, name) VALUES ("${continent_code}", "${code}", "${name}");`
+
+const dropCountrySQL = ({ continent_code, code, name }) =>
+  `DELETE FROM countries WHERE continent_code = "${continent_code}" AND code = "${code}" AND name = "${name}";`
+
+const insertCitySQL = ({ stay_price, travel_price, country, name }) =>
+  `INSERT INTO cities SET (stay_price, travel_price, country, name) VALUES ("${stay_price}", "${travel_price}", "${country}", "${name}");`
+
+const dropCitySQL = ({ stay_price, travel_price, country, name }) =>
+  `DELETE FROM cities WHERE stay_price = ${stay_price} AND travel_price = ${travel_price} AND country = "${country}" AND name = "${name}";`
+
+const getFileName = (file) =>
+  `${new Date()
+    .toISOString()
+    .split('.')[0]
+    .replace(/\D/g, '')}_${file}_seed.sql`
+
+const write_sql = (file, up, down) => {
+  const name = getFileName(file)
 
   fs.writeFile(
     name,
-    `-- +goose Up \n-- +goose StatementBegin \n${values
-      .join(",")
-      .replace(/;,/g, "; \n")
-      .replace(/'/g, "")
-      .replace(/"/g, "'")} \n-- +goose StatementEnd
+    `-- +goose Up \n-- +goose StatementBegin \n${up} \n-- +goose StatementEnd\n
+      \n-- +goose Down \n-- +goose StatementBegin \n${down} \n-- +goose StatementEnd
       `,
-    err => {
-      if (err) return console.log(err);
-      console.log("The file was saved!");
+    (err) => {
+      if (err) return console.log(err)
+      console.log('The file was saved!')
+    },
+  )
+
+  spawn('mv', [`./${name}`, '../src/database/migrations'])
+}
+
+const getValues = (name, func, json) => {
+  values = []
+  for (let value of objToMap(json)) {
+    const [k, v] = value
+    let obj = {}
+
+    switch (name) {
+      case 'continents':
+        obj = {
+          code: k,
+          name: v,
+        }
+        values.push(func(obj))
+        break
+      case 'countries':
+        obj = {
+          code: k,
+          continent_code: v['continent'],
+          name: v['name'],
+        }
+        values.push(func(obj))
+        break
+      case 'cities':
+        for (let city of v) {
+          obj = {
+            stay_price: getRandomInt(1, 500),
+            travel_price: getRandomInt(500, 1500),
+            country: k,
+            name: city,
+          }
+          values.push(func(obj))
+        }
+        break
+      default:
+        break
     }
-  );
+  }
+  return values
+    .join(',')
+    .replace(/;,/g, '; \n')
+    .replace(/'/g, '')
+    .replace(/"/g, "'")
+}
 
-  spawn("mv", [`./${name}`, "../src/database/migrations"]);
-};
+const continentsSeed = () => {
+  const up = getValues('continents', insertContinentSQL, continents)
+  const down = getValues('continents', dropContinentSQL, continents)
+  write_sql('continents', up, down)
+}
 
-main();
+const countriesSeed = () => {
+  const up = getValues('countries', insertCountrySQL, countries)
+  const down = getValues('countries', dropCountrySQL, countries)
+  write_sql('countries', up, down)
+}
+
+const citiesSeed = () => {
+  const up = getValues('cities', insertCitySQL, cities)
+  const down = getValues('cities', dropCitySQL, cities)
+  write_sql('cities', up, down)
+}
+
+const main = () => {
+  continentsSeed()
+  countriesSeed()
+  citiesSeed()
+}
+
+main()
