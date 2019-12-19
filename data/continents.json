@@ -1,9 +1,30 @@
 {
-  "AF": "Africa",
-  "AN": "Antarctica",
-  "AS": "Asia",
-  "EU": "Europe",
-  "NA": "North America",
-  "OC": "Oceania",
-  "SA": "South America"
+  "AF": {
+    "name": "Africa",
+    "image_url": ""
+  },
+  "AN": {
+    "name": "Antarctica",
+    "image_url": ""
+  },
+  "AS": {
+    "name": "Asia",
+    "image_url": ""
+  },
+  "EU": {
+    "name": "Europe",
+    "image_url": ""
+  },
+  "NA": {
+    "name": "North America",
+    "image_url": ""
+  },
+  "OC": {
+    "name": "Oceania",
+    "image_url": ""
+  },
+  "SA": {
+    "name": "South America",
+    "image_url": ""
+  }
 }

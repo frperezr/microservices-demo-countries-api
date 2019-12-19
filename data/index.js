@@ -19,9 +19,11 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min
 }
 
-const insertContinentSQL = ({ code, name }) => `INSERT INTO continents (code, name) VALUES ("${code}", "${name}");`
+const insertContinentSQL = ({ code, name, imageUrl }) =>
+  `INSERT INTO continents (code, name, image_url) VALUES ("${code}", "${name}", "${imageUrl}");`
 
-const dropContinentSQL = ({ code, name }) => `DELETE FROM continents WHERE code = "${code}" AND name = "${name}";`
+const dropContinentSQL = ({ code, name, imageUrl }) =>
+  `DELETE FROM continents WHERE code = "${code}" AND name = "${name}" AND image_url = "${imageUrl}";`
 
 const insertCountrySQL = ({ continent_code, code, name }) =>
   `INSERT INTO countries (continent_code, code, name) VALUES ("${continent_code}", "${code}", "${name}");`
@@ -68,7 +70,8 @@ const getValues = (name, func, json) => {
       case 'continents':
         obj = {
           code: k,
-          name: v,
+          name: v['name'],
+          imageUrl: v['image_url'],
         }
         values.push(func(obj))
         break
