@@ -6,6 +6,14 @@ seed s:
 	@echo "[generating] Generating file..."
 	@cd data && node index.js
 
+install i:
+	@echo "[install] Installing dependencies..."
+	@yarn
+
+build b:
+	@echo "[building] Building service..."
+	@yarn build
+
 run r:
 	@echo "[running] Running service..."
 	@yarn start
