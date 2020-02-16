@@ -2,7 +2,7 @@
   "name": "countries-api",
   "version": "0.0.1",
   "main": "index.js",
-  "repository": "git@github.com:frperezr/noken-countries-api.git",
+  "repository": "git@github.com:frperezr/microservices-demo-countries-api.git",
   "author": "Francisco Pérez <frperezr93@gmail.com>",
   "license": "MIT",
   "scripts": {

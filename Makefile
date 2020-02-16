@@ -1,6 +1,6 @@
 VERSION=$$(cat package.json | grep version | sed 's/"/ /g' | awk {'print $$3'})
 USER=frperezr
-SVC=noken-countries-api
+SVC=microservices-demo-countries-api
 
 seed s:
 	@echo "[generating] Generating file..."
